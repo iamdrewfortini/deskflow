@@ -30,6 +30,7 @@
 
 #include <Shlobj.h>
 #include <algorithm>
+#include <cstdlib>
 #include <comutil.h>
 #include <string.h>
 
@@ -1249,8 +1250,16 @@ bool MSWindowsScreen::onMouseMove(int32_t mx, int32_t my)
     // it's probably a bogus motion that we want to
     // ignore (see warpCursorNoFlush() for a further
     // description).
+    //
+    // the zone test below is measured from the primary monitor's centre to the edges of the whole virtual
+    // desktop, so on a multi-monitor server whose primary monitor is not centred it lets through the large
+    // delta that Windows reports while the re-centring warp has not landed yet (deskflow/deskflow#10030).
+    // A single genuine mouse report is a few pixels, so also drop any one report larger than
+    // maxPlausibleDelta, independent of screen geometry.
     static int32_t bogusZoneSize = 10;
-    if (-x + bogusZoneSize > m_xCenter - m_x || x + bogusZoneSize > m_x + m_w - m_xCenter ||
+    static const int32_t maxPlausibleDelta = 400;
+    if (std::abs(x) > maxPlausibleDelta || std::abs(y) > maxPlausibleDelta ||
+        -x + bogusZoneSize > m_xCenter - m_x || x + bogusZoneSize > m_x + m_w - m_xCenter ||
         -y + bogusZoneSize > m_yCenter - m_y || y + bogusZoneSize > m_y + m_h - m_yCenter) {
 
       LOG_DEBUG("dropped bogus delta motion: %+d,%+d", x, y);
