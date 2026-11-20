@@ -30,8 +30,8 @@
 
 #include <Shlobj.h>
 #include <algorithm>
-#include <cstdlib>
 #include <comutil.h>
+#include <cstdlib>
 #include <string.h>
 
 // suppress warning about GetVersionEx, which is used indirectly in this
@@ -1258,9 +1258,9 @@ bool MSWindowsScreen::onMouseMove(int32_t mx, int32_t my)
     // maxPlausibleDelta, independent of screen geometry.
     static int32_t bogusZoneSize = 10;
     static const int32_t maxPlausibleDelta = 400;
-    if (std::abs(x) > maxPlausibleDelta || std::abs(y) > maxPlausibleDelta ||
-        -x + bogusZoneSize > m_xCenter - m_x || x + bogusZoneSize > m_x + m_w - m_xCenter ||
-        -y + bogusZoneSize > m_yCenter - m_y || y + bogusZoneSize > m_y + m_h - m_yCenter) {
+    if (std::abs(x) > maxPlausibleDelta || std::abs(y) > maxPlausibleDelta || -x + bogusZoneSize > m_xCenter - m_x ||
+        x + bogusZoneSize > m_x + m_w - m_xCenter || -y + bogusZoneSize > m_yCenter - m_y ||
+        y + bogusZoneSize > m_y + m_h - m_yCenter) {
 
       LOG_DEBUG("dropped bogus delta motion: %+d,%+d", x, y);
     } else {
